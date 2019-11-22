@@ -292,6 +292,10 @@ public class Infoflow extends AbstractInfoflow {
 				constructCallgraph();
 			}
 
+			//DotGraphUtil.CGToDotWithMethodsSignature(Scene.v().getCallGraph(), dummyMainMethod);
+			//DotGraphUtil.CGToDotWithMethodsName(Scene.v().getCallGraph(), dummyMainMethod);
+			//DotGraphUtil.exportDotGraph("graph_1", "C:\\Users\\china\\Desktop\\Doing\\FlowDroid\\apks", DotGraphUtil.dotGraph);
+
 			if (config.getCallgraphAlgorithm() != CallgraphAlgorithm.OnDemand)
 				logger.info("Callgraph has {} edges", Scene.v().getCallGraph().size());
 

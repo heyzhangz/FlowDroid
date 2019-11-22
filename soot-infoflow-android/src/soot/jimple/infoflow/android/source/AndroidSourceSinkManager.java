@@ -951,6 +951,30 @@ public class AndroidSourceSinkManager implements ISourceSinkManager, IOneSourceA
 		return null;
 	}
 
+	/***
+	 * Get a soot method definded by signature
+	 * @param methodSignature the signature of the method
+	 * @return the soot method of the given signature
+	 */
+	public SootMethod grabMethod(String methodSignature) {
+
+		String cname = Scene.v().signatureToClass(methodSignature);
+		String mname = Scene.v().signatureToSubsignature(methodSignature);
+
+		if (!Scene.v().containsClass(cname))
+			return null;
+
+		SootClass c = Scene.v().getSootClass(cname);
+		SootMethod sm = c.getMethodUnsafe(mname);
+
+		while(sm == null && c.hasSuperclass()) {
+			c = c.getSuperclass();
+			sm = c.getMethodUnsafe(mname);
+		}
+
+		return sm;
+	}
+
 	@Override
 	public void initialize() {
 		// Get the Soot method or field for the source signatures we have
@@ -975,7 +999,7 @@ public class AndroidSourceSinkManager implements ISourceSinkManager, IOneSourceA
 						if (sootMethod != null)
 							sourceMethods.put(sootMethod, sourceSinkDef);
 					} else {
-						SootMethod sm = Scene.v().grabMethod(entry.getO1());
+						SootMethod sm = grabMethod(entry.getO1());
 						if (sm != null)
 							sourceMethods.put(sm, sourceSinkDef);
 					}
@@ -1005,7 +1029,7 @@ public class AndroidSourceSinkManager implements ISourceSinkManager, IOneSourceA
 					MethodSourceSinkDefinition methodSourceSinkDef = ((MethodSourceSinkDefinition) sourceSinkDef);
 					if (methodSourceSinkDef.getCallType() == CallType.Return) {
 						SootMethodAndClass method = methodSourceSinkDef.getMethod();
-						SootMethod m = Scene.v().grabMethod(method.getSignature());
+						SootMethod m = grabMethod(method.getSignature());
 						if (m != null)
 							sinkReturnMethods.put(m, methodSourceSinkDef);
 					} else {
@@ -1020,7 +1044,7 @@ public class AndroidSourceSinkManager implements ISourceSinkManager, IOneSourceA
 							if (sootMethod != null)
 								sinkMethods.put(sootMethod, sourceSinkDef);
 						} else {
-							SootMethod sm = Scene.v().grabMethod(entry.getO1());
+							SootMethod sm = grabMethod(entry.getO1());
 							if (sm != null)
 								sinkMethods.put(sm, entry.getO2());
 						}
